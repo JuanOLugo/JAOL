@@ -10,7 +10,7 @@ userR.post("/createuser", async (req, res, next) => {
     // verificamos que todo llegue a la perfeccion
     if (!username || !password || !usertype) {
         //Enviamos codigo de error en caso de que no llegue todo
-        res.status(401).send({ msgERR: "NO HA COMPETADO TODOS LOS CAMPOS, POR FAVOR COMPLETELOS" })
+        res.status(400).send({ msgERR: "NO HA COMPETADO TODOS LOS CAMPOS, POR FAVOR COMPLETELOS" })
     } else {
         //Verificamos si el usuario existe
         const verifyIfUserExists = await User.findOne({ userName: username })
@@ -26,17 +26,9 @@ userR.post("/createuser", async (req, res, next) => {
             })
             //Guardamos el nuevo usuario en la base de datos
             const newUserAdd = await newUser.save()
-            //Creamos el token para el usuario
-            const userPayload = {
-                userName: newUser.userName,
-                typeAccount: newUser.typeAccount,
-                id: newUser.id,
-            }
-            const createUserToken = jwt.sign(userPayload, process.env.SECRET_KEY)
-            //Enviamos el token al usuario junto al usuario agregado a la base de datos    
-            if (createUserToken) res.status(200).send({
+
+            res.status(200).send({
                 msgOK: "User created successfully",
-                token: createUserToken,
                 user: newUserAdd
             })
             // Enviamos un mensaje de error en caso de que el nombre de usuario ya este en uso
@@ -46,7 +38,59 @@ userR.post("/createuser", async (req, res, next) => {
 
 })
 //Login account
+userR.post("/login", async (req, res, next) => {
+    const { username, password } = req.body
+
+    const authorization = req.get("Authorization")
+    if (!authorization) {
+        if (!username || !password) res.status(401).send({ msgERR: "RELLENA EL CONTENIDO" })
+        else {
+            const verifyIfUserExists = await User.findOne({ userName: username })
+            if (!verifyIfUserExists) {
+                res.status(400).send({ msgERR: "El usuario no existe" })
+            } else {
+                const verifyPassword = await bcrypt.compare(password, verifyIfUserExists.password)
+                if (verifyPassword) {
+                    const userPayload = {
+                        userName: verifyIfUserExists.userName,
+                        typeAccount: verifyIfUserExists.typeAccount,
+                        id: verifyIfUserExists.id,
+                    }
+                    const createUserToken = jwt.sign(userPayload, process.env.SECRET_KEY)
+                    res.status(200).send({
+                        msgOK: "User logged in successfully",
+                        token: createUserToken,
+                        user: verifyIfUserExists
+                    })
+                }
+            }
+        }
+    } else if (authorization.startsWith("Bearer")) {
+        let token = authorization.split(" ")[1]
+        const verifyToken = jwt.verify(token, process.env.SECRET_KEY)
+        if (verifyToken) {
+            const findUser = await User.findById(verifyToken.id)
+            if (findUser) {
+                res.status(200).send({
+                    msgOK: "User logged successfully",
+                    token: token,
+                    user: findUser
+                })
+            } else res.status(401).send({
+                msgERR: "User not found"
+            })
+        } else res.status(401).send({
+            msgERR: "NO TOKEN PROVIDE"
+        })
+    } else res.status(400).json({
+        msgERR: "NO TOKEN PROVIDE"
+    })
+
+
+})
+
 //Remove account
+//No se hara
 
 //export router
 module.exports = userR
