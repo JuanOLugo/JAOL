@@ -10,7 +10,10 @@ const userSchema = new Schema({
         }
     ],
     typeAccount: String,
-    Store: String,
+    Stores: [{
+        type: Schema.Types.ObjectId,
+        ref: "store"
+    }],
     StoreLevel: Number
 })
 

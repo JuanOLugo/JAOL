@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test jest --verbose",
+    "test": "cross-env NODE_ENV=test jest --verbose --testNamePattern",
     "dev": "cross-env NODE_ENV=production nodemon app.js"
   },
   "keywords": [],

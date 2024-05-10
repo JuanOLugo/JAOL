@@ -1,7 +1,7 @@
 const {Schema, model, set} = require("mongoose")
 
 const storeSchema = new Schema({
-    storeName: String,
+    StoreName: String,
     StorePassword: String,
     StoreOwner: {
         type: Schema.Types.ObjectId,

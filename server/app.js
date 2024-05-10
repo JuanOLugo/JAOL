@@ -17,6 +17,9 @@ app.use(express.json())
 //Ruta para users
 app.use("/api/users", require("./ROUTES/user.ROUTES"))
 
+//Ruta para las tiendas
+app.use("/api/stores", require("./ROUTES/store.ROUTES"))
+
 //handle errors middleware
 
 // Elegimos el puerto depende como estemos runeando el server

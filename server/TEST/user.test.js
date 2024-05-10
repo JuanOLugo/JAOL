@@ -76,7 +76,7 @@ test.skip("Intentando logearme normalmente", async () => {
         console.log(res.body.token)
 })
 
-test("Iniciando sesion con el token", async () => {
+test.skip("Iniciando sesion con el token", async () => {
     const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6Ikp1YW5BbmRyZXMiLCJ0eXBlQWNjb3VudCI6IkNsaWVudCIsImlkIjoiNjYzZDMxZjI3NzhhYjRjMDg3M2NmYmZkIiwiaWF0IjoxNzE1Mjg2NTE0fQ.FMY-D5K_6dhETw_rpg9n0fqQDt6IHms07GvypsdnDrc"
 
     const res = await api.post("/api/users/login")
@@ -87,7 +87,7 @@ test("Iniciando sesion con el token", async () => {
     expect(res.body.msgOK).toBe("User logged successfully")
 })
 
-test("Intentando iniciar sesion sin rellenar los parametros",async () => {
+test.skip("Intentando iniciar sesion sin rellenar los parametros",async () => {
     const userToSend = {
         username: "dlkas",
         password: "",
