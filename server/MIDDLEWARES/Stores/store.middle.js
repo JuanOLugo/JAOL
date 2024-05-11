@@ -1,4 +1,4 @@
-const { verifyToken, store_user_verification } = require("../../UTILS/verifyToken.UTIL")
+const { verifyToken, store_user_verification } = require("../../UTILS/endpoints.UTIL")
 const User = require("../../DB/models/user.MODEL")
 const Store = require("../../DB/models/store.MODEL")
 const Client = require("../../DB/models/client.MODEL")
