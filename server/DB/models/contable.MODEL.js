@@ -10,6 +10,7 @@ const ContableSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "credits"
     }],
+    //store contable es a la tienda a la que pertenece este contabilidad
     storeContable: {
         type: Schema.Types.ObjectId,
         ref: "store"

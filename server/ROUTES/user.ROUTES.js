@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const User = require("../DB/models/user.MODEL")
 const bcrypt = require('bcrypt')
 const userR = Router()
+const {verifyToken} = require("../UTILS/verifyToken.UTIL")
 
 //create account
 userR.post("/createuser", async (req, res, next) => {
@@ -66,22 +67,23 @@ userR.post("/login", async (req, res, next) => {
             }
         }
     } else if (authorization.startsWith("Bearer")) {
-        let token = authorization.split(" ")[1]
-        const verifyToken = jwt.verify(token, process.env.SECRET_KEY)
-        if (verifyToken) {
-            const findUser = await User.findById(verifyToken.id)
-            if (findUser) {
-                res.status(200).send({
-                    msgOK: "User logged successfully",
-                    token: token,
-                    user: findUser
-                })
-            } else res.status(401).send({
-                msgERR: "User not found"
+        let userDecoded;
+        try {
+            userDecoded = await verifyToken(authorization)
+        } catch (error) {
+            res.status(400).send(error.msgERR)
+        }
+        const findUser = await User.findById(userDecoded.decodedToken.id)
+        if (findUser) {
+            res.status(200).send({
+                msgOK: "User logged successfully",
+                token: userDecoded.token,
+                user: findUser
             })
         } else res.status(401).send({
-            msgERR: "NO TOKEN PROVIDE"
+            msgERR: "User not found"
         })
+
     } else res.status(400).json({
         msgERR: "NO TOKEN PROVIDE"
     })

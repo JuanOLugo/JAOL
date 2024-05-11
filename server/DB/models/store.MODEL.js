@@ -1,4 +1,4 @@
-const {Schema, model, set} = require("mongoose")
+const { Schema, model, set } = require("mongoose")
 
 const storeSchema = new Schema({
     StoreName: String,
@@ -16,7 +16,8 @@ const storeSchema = new Schema({
         ref: "client"
     }],
     StorePaymentMethod: [{
-        type: String
+        paymentName: String,
+        paymentDescription: String
     }],
 
 })
