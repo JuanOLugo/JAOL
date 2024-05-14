@@ -5,11 +5,11 @@ const verifyToken = async (authorization) => {
     //Verificamos la autorizacion
     let token;
     if (authorization.startsWith("Bearer")) token = authorization.split(" ")[1]
-    else throw new Error({ msgERR: "token missing or invalid" })
+    else return { msgERR: "token missing or invalid" }
     // Decodificamos el token
     const decodedToken = jwt.verify(token, process.env.SECRET_KEY)
     //Verificamos que el token sea valido
-    if (!token || !decodedToken.id) throw new Error({ msgERR: "token missing or invalid" })
+    if (!token || !decodedToken.id) return { msgERR: "token missing or invalid" }
     return { token, decodedToken };
 }
 

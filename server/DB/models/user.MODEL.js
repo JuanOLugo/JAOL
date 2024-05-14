@@ -17,14 +17,16 @@ const userSchema = new Schema({
     StoreLevel: Number
 })
 
-set("toJSON", {
-    transform: (doc, ret) => {
-        ret.id = ret._id
-        delete ret._id
-        delete ret.__v
-        delete ret.password
-    }
-})
+userSchema.methods.toJSON = function() {
+    const obj = this.toObject();
+    obj.id = obj._id
+    delete obj._id
+    delete obj.__v
+    delete obj.password;
+    return obj;
+  };
+
+
 
 const userModel = model("user", userSchema)
 

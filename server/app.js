@@ -20,6 +20,9 @@ app.use("/api/users", require("./ROUTES/user.ROUTES"))
 //Ruta para las tiendas
 app.use("/api/stores", require("./ROUTES/store.ROUTES"))
 
+//Ruta para la contabilidad
+app.use("/api/contable", require("./ROUTES/contable.routes"))
+
 //handle errors middleware
 
 // Elegimos el puerto depende como estemos runeando el server

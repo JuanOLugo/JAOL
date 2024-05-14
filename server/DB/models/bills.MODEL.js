@@ -7,7 +7,16 @@ const billSchema = new Schema({
     StoreBill: {
         type: Schema.Types.ObjectId,
         ref: "store"
-    }
+    },
+    clientBill: {
+        type: Schema.Types.ObjectId,
+        ref: "client"
+    },
+    contableBill: {
+        type: Schema.Types.ObjectId,
+        ref: "contable"
+    },
+    dateBill: Date
 
 })
 

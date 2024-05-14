@@ -4,13 +4,13 @@ const ContableSchema = new Schema({
     date: String,
     bills: [{
         type: Schema.Types.ObjectId,
-        ref: "bills"
+        ref: "bill"
     }],
     credits: [{
         type: Schema.Types.ObjectId,
         ref: "credits"
     }],
-    //store contable es a la tienda a la que pertenece este contabilidad
+    //store contable es la tienda a la que pertenece este contabilidad
     storeContable: {
         type: Schema.Types.ObjectId,
         ref: "store"
@@ -27,6 +27,6 @@ set("toJSON", {
     }
 })
 
-const contableModel = model("contable", contableSchema)
+const contableModel = model("contable", ContableSchema)
 
-module.exports = userModel
+module.exports = contableModel

@@ -3,6 +3,7 @@ const User = require("../../DB/models/user.MODEL")
 const Store = require("../../DB/models/store.MODEL")
 const Client = require("../../DB/models/client.MODEL")
 const bcrypt = require("bcrypt")
+const Contable = require("../../DB/models/contable.MODEL")
 
 
 const createStore = async (req, res, next) => {
@@ -97,11 +98,11 @@ const addClient = async (req, res) => {
         const userDecoded = await verifyToken(req.get("Authorization"))
         const {user, store, msgERR} = await store_user_verification(userDecoded, idStore);
         if(msgERR) return console.log(msgERR);
-        const newClient = new Client({ clientName })
+        const newClient = new Client({ clientName, clientStore: store.id })
         const clientSaved = await newClient.save()
         store.StoreClients.push(clientSaved)
         await store.save()
-        const stores = await Store.find({ StoreOwner: user.id }).populate("StoreClients", { clientName: 1 })
+        const stores = await Store.find({ StoreOwner: user.id }).populate("StoreClients")
         res.status(200).send({
             msgOK: "Client added successfully",
             stores
@@ -132,4 +133,25 @@ const deleteClient = async (req, res) => {
     }
 }
 
-module.exports = { addClient, createStore, addPaymentMethod, deletePaymentMethod, deleteClient}
+const addLog = async (req, res) => {
+    const {idStore, date} = req.body
+    const decodedToken = await verifyToken(req.get('Authorization'))
+    const {user, store, msgERR} = await store_user_verification(decodedToken, idStore);
+    if(!user ||!store) return res.status(400).send({error: "user or store not found"})
+    const newLog = new Contable({
+        date: new Date(),
+        storeContable: store.id
+    })
+    const contableSaved = await newLog.save()
+    store.StoreContableLog.push(contableSaved)
+    await store.save()
+    res.status(200).send({
+        msgOK: "Log added successfully",
+        logContable: contableSaved
+    })
+    
+
+}
+
+
+module.exports = { addClient, createStore, addPaymentMethod, deletePaymentMethod, deleteClient, addLog}

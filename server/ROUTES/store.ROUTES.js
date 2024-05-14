@@ -1,6 +1,6 @@
 const { Router } = require("express")
 const storeR = Router()
-const {addClient, createStore, addPaymentMethod, deletePaymentMethod, deleteClient} = require("../MIDDLEWARES/Stores/store.middle")
+const {addClient, createStore, addPaymentMethod, deletePaymentMethod, deleteClient, addLog} = require("../MIDDLEWARES/Stores/store.middle")
 
 //Create store
 
@@ -22,10 +22,8 @@ storeR.post("/client", addClient )
 
 storeR.delete("/client", deleteClient)
 
-//Store workers
-
-//delete Store workers
-
 //Add logcontable
+
+storeR.post("/logcontable", addLog)
 
 module.exports = storeR

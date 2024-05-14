@@ -5,7 +5,11 @@ const clientSchema = new Schema({
     clientCredits: [{
         type: Schema.Types.ObjectId,
         ref: "credits"
-    }]
+    }],
+    clientStore: {
+        type: Schema.Types.ObjectId,
+        ref: "store"
+    }
 })
 
 set("toJSON", {
