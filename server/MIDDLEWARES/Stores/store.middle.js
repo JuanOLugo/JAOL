@@ -56,10 +56,9 @@ const createStore = async (req, res, next) => {
 
 const addPaymentMethod = async (req, res) => {
     const { paymentName, paymentDescription, idStore } = req.body
+    const { store } = req.user_store
     try {
-        const userDecoded = await verifyToken(req.get("Authorization"))
-        const {user, store, msgERR} = await store_user_verification(userDecoded, idStore);
-        if(msgERR) return console.log(msgERR);
+
         store.StorePaymentMethod.push({
             paymentName,
             paymentDescription
@@ -75,11 +74,9 @@ const addPaymentMethod = async (req, res) => {
 }
 
 const deletePaymentMethod = async (req, res) => {
-    const { paymentMethodID, idStore } = req.body
+    const { paymentMethodID } = req.body
+    const { store } = req.user_store
     try {
-        const userDecoded = await verifyToken(req.get("Authorization"))
-        const {user, store, msgERR} = await store_user_verification(userDecoded, idStore);
-        if(msgERR) return console.log(msgERR);
         const filteringMethods = store.StorePaymentMethod.filter(e => e.id !== paymentMethodID)
         store.StorePaymentMethod = filteringMethods
         store.save()
@@ -92,12 +89,10 @@ const deletePaymentMethod = async (req, res) => {
 }
 
 const addClient = async (req, res) => {
-    const { idStore, clientName } = req.body
+    const { clientName } = req.body
+    const { user, store } = req.user_store
 
     try {
-        const userDecoded = await verifyToken(req.get("Authorization"))
-        const {user, store, msgERR} = await store_user_verification(userDecoded, idStore);
-        if(msgERR) return console.log(msgERR);
         const newClient = new Client({ clientName, clientStore: store.id })
         const clientSaved = await newClient.save()
         store.StoreClients.push(clientSaved)
@@ -114,11 +109,9 @@ const addClient = async (req, res) => {
 }
 
 const deleteClient = async (req, res) => {
-    const { idClient, idStore } = req.body
+    const { idClient } = req.body
+    const { user, store } = req.user_store
     try {
-        const userDecoded = await verifyToken(req.get("Authorization"))
-        const {user, store, msgERR} = await store_user_verification(userDecoded, idStore);
-        if(msgERR) return console.log(msgERR);
         const filteringClients = store.StoreClients.filter(e => e._id.toString() !== idClient)
         store.StoreClients = filteringClients
         await store.save()
@@ -128,30 +121,43 @@ const deleteClient = async (req, res) => {
             msgOK: "Client deleted successfully",
             stores
         })
-    } catch (err) { 
+    } catch (err) {
         console.log(err)
     }
 }
 
 const addLog = async (req, res) => {
-    const {idStore, date} = req.body
-    const decodedToken = await verifyToken(req.get('Authorization'))
-    const {user, store, msgERR} = await store_user_verification(decodedToken, idStore);
-    if(!user ||!store) return res.status(400).send({error: "user or store not found"})
-    const newLog = new Contable({
-        date: new Date(),
-        storeContable: store.id
+    const { user, store } = req.user_store
+
+    const myStorePopulate = await store.populate("StoreContableLog")
+    const theDate = new Date().toString().split(" ", 4)
+    console.log(myStorePopulate)
+    const findIfExistLog = myStorePopulate.StoreContableLog.map((e, i) => {
+        const date = e.date.split(" ", 4)
+        return date.toString() === theDate.toString()
     })
-    const contableSaved = await newLog.save()
-    store.StoreContableLog.push(contableSaved)
-    await store.save()
-    res.status(200).send({
-        msgOK: "Log added successfully",
-        logContable: contableSaved
-    })
-    
+    console.log(findIfExistLog)
+
+    if (findIfExistLog.length === 0) {
+        const newLog = new Contable({
+            date: new Date(),
+            storeContable: store.id
+        })
+        const savedLog = await newLog.save()
+        store.StoreContableLog.push(savedLog.id)
+        await store.save()
+        res.status(200).send({
+            msgOK: "Log added successfully"
+        })
+    } else {
+        res.status(400).send({
+            msgERR: "Log already exist"
+        })
+    }
+
+
 
 }
 
 
-module.exports = { addClient, createStore, addPaymentMethod, deletePaymentMethod, deleteClient, addLog}
+module.exports = { addClient, createStore, addPaymentMethod, deletePaymentMethod, deleteClient, addLog }
