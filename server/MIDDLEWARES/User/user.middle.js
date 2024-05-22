@@ -12,9 +12,10 @@ const userLogin = async (req, res, next) => {
         else {
             const verifyIfUserExists = await User.findOne({ userName: username })
             if (!verifyIfUserExists) {
-                res.status(400).send({ msgERR: "El usuario no existe" })
+                res.status(400).send({ msgERR: "Credenciales incorrectas" })
             } else {
                 const verifyPassword = await bcrypt.compare(password, verifyIfUserExists.password)
+                if(!verifyPassword) return res.status(400).send({msgERR: "Credenciales incorrectas"})
                 if (verifyPassword) {
                     const userPayload = {
                         userName: verifyIfUserExists.userName,
