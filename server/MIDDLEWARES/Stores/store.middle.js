@@ -54,6 +54,12 @@ const createStore = async (req, res, next) => {
     }
 }
 
+const getMyStores = async (req, res) => {
+    const {user} = req.user_store
+    const stores = await Store.find({ StoreOwner: user._id })
+    res.status(200).send(stores)
+}
+
 const addPaymentMethod = async (req, res) => {
     const { paymentName, paymentDescription, idStore } = req.body
     const { store } = req.user_store
@@ -160,4 +166,4 @@ const addLog = async (req, res) => {
 }
 
 
-module.exports = { addClient, createStore, addPaymentMethod, deletePaymentMethod, deleteClient, addLog }
+module.exports = { addClient, createStore, addPaymentMethod, deletePaymentMethod, deleteClient, addLog, getMyStores}

@@ -21,7 +21,7 @@ const store_user_verification = async (userdecoded, idStore) => {
         store = await Store.findById(idStore)
         if (!store) return { msgERR: "store not found" }
     }else{
-        return user
+        return {user}
     }
 
     return {

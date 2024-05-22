@@ -2,19 +2,30 @@ import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../Context/UserContext";
 import { StoreContext } from "../../Context/StoreContext";
 import Create from "./Create";
-import { Input, button } from "@nextui-org/react";
+import { Input } from "@nextui-org/react";
 import { FaCheck } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
-
+import { CreateStore } from "../../Helpers/Connections";
 function StartCreatingStore() {
   const { myAccount } = useContext(UserContext);
-  const { myStores, setMyStores } = useContext(StoreContext);
+  const { setMyStores, myStores } = useContext(StoreContext);
   const [buttonVisible, setbuttonVisible] = useState(false);
   const [verifyClick, setverifyClick] = useState(false);
+  const [errors, seterrors] = useState(null);
   const [Store, setStore] = useState({
     storename: "",
     storepassword: "",
   });
+
+  useEffect(() => {
+    //Validation
+    if (myAccount) {
+      if (myAccount.Stores.length > 0) {
+        window.localStorage.setItem("createStoreTutorial", "true");
+        window.location.reload()
+      }
+    }
+  }, [myAccount]);
 
   const handleChangeName = (e) => {
     setStore({ ...Store, storename: e.target.value });
@@ -23,13 +34,6 @@ function StartCreatingStore() {
   const handleChangePassword = (e) => {
     setStore({ ...Store, storepassword: e.target.value });
   };
-
-  const handleSubmit = async (e) => {
-    const data = await CreateStore(Store);
-    if (data.response) {
-      setverifyClick(true);
-    }
-  }
 
   useEffect(() => {
     if (Store.storename.length > 2) {
@@ -47,14 +51,31 @@ function StartCreatingStore() {
     }
   }, [Store.storepassword]);
 
-  const handleCreateStore = () => {
-    if(Store.storename === "" || Store.storepassword === "" ){
-        
+  const handleCreateStore = async () => {
+    if (Store.storename === "" || Store.storepassword === "") {
+      seterrors("Por favor, rellene todos los campos");
+    } else {
+      const data = await CreateStore(Store)
+        .then((res) => res)
+        .then((data) => data);
+      setMyStores(data.data.userStores);
+      window.localStorage.setItem("createStoreTutorial", "true")
+      setStore({ storename: "", storepassword: "" });
+      window.location.reload()
     }
-  }
+  };
+
+  useEffect(() => {
+    if (errors) {
+      setTimeout(() => {
+        seterrors(null);
+      }, 2000);
+    }
+  }, [errors]);
 
   return (
     <div>
+      <h1>{errors}</h1>
       {!myAccount ? null : !verifyClick ? (
         <Create>
           <h1 className="text-2xl">
@@ -121,7 +142,10 @@ function StartCreatingStore() {
             isRequired
             endContent={
               buttonVisible ? (
-                <button className="text-primary drop-shadow-2xl" onClick={handleCreateStore}>
+                <button
+                  className="text-primary drop-shadow-2xl"
+                  onClick={handleCreateStore}
+                >
                   <FaCheck />
                 </button>
               ) : null
