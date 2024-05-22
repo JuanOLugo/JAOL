@@ -22,13 +22,15 @@ const storeSchema = new Schema({
 
 })
 
-set("toJSON", {
-    transform: (doc, ret) => {
-        ret.id = ret._id
-        delete ret._id
-        delete ret.__v
-    }
-})
+
+storeSchema.methods.toJSON = function() {
+    const obj = this.toObject();
+    obj.id = obj._id
+    delete obj._id
+    delete obj.__v
+    delete obj.StorePassword
+    return obj;
+};
 
 const storeModel = model("store", storeSchema)
 

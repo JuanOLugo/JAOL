@@ -3,7 +3,7 @@ import { LoginUser } from '../../Helpers/Connections'
 import { Input } from "@nextui-org/input";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Button, useDisclosure } from "@nextui-org/react";
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import RegisterModal from './RegisterModal';
 import { UserContext } from '../../Context/UserContext';
 
@@ -18,7 +18,7 @@ function FormSign() {
   const [Success, setSuccess] = useState(null)
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { myAccount, setMyAccount } = useContext(UserContext)
-
+  const navigate = useNavigate()
   useEffect(() => {
     if (errors) {
       setTimeout(() => {
@@ -40,19 +40,15 @@ function FormSign() {
   const handleSubmitLogin = async () => {
     const data = await LoginUser(UserInitials).then(res => res).then(data => {
       setSuccess(data.data.msgOK)
-      setTimeout(() => {
         window.localStorage.setItem("u53r", data.data.token)
         setMyAccount(data.data.user)
         setSuccess(null)
-        console.log(myAccount)
-      }, 500)
+        navigate("/dashboard")
      })
     .catch(err => seterrors(err.response.data.msgERR))
-    
-
-
-
   }
+
+  
 
 
   const toggleVisibility = () => setisVisible(!isVisible)

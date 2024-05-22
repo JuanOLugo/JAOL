@@ -10,13 +10,13 @@ const userLogin = async (req, res, next) => {
     if (!authorization) {
         if (!username || !password) res.status(401).send({ msgERR: "RELLENA EL CONTENIDO" })
         else {
-            const verifyIfUserExists = await User.findOne({ userName: username })
+            const verifyIfUserExists = await User.findOne({ userName: username }).populate({path: "Stores", select: "-StorePassword"}).exec()
             if (!verifyIfUserExists) {
                 res.status(400).send({ msgERR: "Credenciales incorrectas" })
             } else {
                 const verifyPassword = await bcrypt.compare(password, verifyIfUserExists.password)
                 if(!verifyPassword) return res.status(400).send({msgERR: "Credenciales incorrectas"})
-                if (verifyPassword) {
+                if (verifyPassword) { 
                     const userPayload = {
                         userName: verifyIfUserExists.userName,
                         typeAccount: verifyIfUserExists.typeAccount,
@@ -38,7 +38,7 @@ const userLogin = async (req, res, next) => {
         } catch (error) {
             res.status(400).send(error.msgERR)
         }
-        const findUser = await User.findById(userDecoded.decodedToken.id).populate("Stores")
+        const findUser = await User.findById(userDecoded.decodedToken.id).populate({path: "Stores", select: "-StorePassword"}).exec()
         if (findUser) {
             res.status(200).send({
                 msgOK: "User logged successfully",
