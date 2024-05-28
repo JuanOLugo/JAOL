@@ -1,13 +1,16 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../Context/UserContext";
 import axios from "axios";
 import { StoreContext } from "../../Context/StoreContext";
 import { GetMyStores } from "../../Helpers/Connections";
 import { useNavigate } from "react-router-dom";
-function Dashboard({ storeState }) {
+import Navbar from "./Navbar";
+import GrandDash from "./GrandDash"
+function Dashboard() {
   const { myAccount, setMyAccount } = useContext(UserContext);
   const { myStores, setMyStores } = useContext(StoreContext);
   const navigate = useNavigate();
+  const [isNavOpen, setisNavOpen] = useState(true)
   useEffect(() => {
     const GetStoresByApi = async () => {
       if (myAccount) {
@@ -16,34 +19,29 @@ function Dashboard({ storeState }) {
       }
     };
 
-    GetStoresByApi()
+    GetStoresByApi();
   }, [myAccount]);
 
   useEffect(() => {
     if (myStores) {
       if (myStores.length <= 0) {
         window.localStorage.setItem("createStoreTutorial", "false");
-        window.location.reload();
+        navigate("/dashboard");
       }
     }
   }, [myStores]);
 
   const handleLogOut = async () => {
-    window.localStorage.removeItem("createStoreTutorial")
-    window.localStorage.removeItem("u53r")
-    setMyAccount(null)
+    window.localStorage.removeItem("createStoreTutorial");
+    window.localStorage.removeItem("u53r");
+    setMyAccount(null);
     setMyStores(null);
     navigate("/login");
-  }
+  };
 
-  return <div>
-    <button onClick={handleLogOut}>logout</button>
-    {
-      myStores &&
-      myStores.map((store, i) => {
-        return <div key={i}>Nombre de la tienda: {store.StoreName}</div>;  
-      })
-    }
+  return <div className="bg-primary-100 h-screen flex justify-evenly items-center">
+    <Navbar setNavOpen={setisNavOpen} navOpen={isNavOpen}/>
+    <GrandDash setNavOpen={setisNavOpen} navOpen={isNavOpen} />
   </div>;
 }
 

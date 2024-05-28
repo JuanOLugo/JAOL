@@ -6,6 +6,7 @@ import { Input } from "@nextui-org/react";
 import { FaCheck } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
 import { CreateStore } from "../../Helpers/Connections";
+
 function StartCreatingStore() {
   const { myAccount } = useContext(UserContext);
   const { setMyStores, myStores } = useContext(StoreContext);
@@ -73,88 +74,90 @@ function StartCreatingStore() {
     }
   }, [errors]);
 
-  return (
-    <div>
-      <h1>{errors}</h1>
-      {!myAccount ? null : !verifyClick ? (
-        <Create>
-          <h1 className="text-2xl">
-            Bienvenido{" "}
-            <label className="font-bold">
-              {myAccount.userName.toUpperCase()}
-            </label>
-          </h1>
-          <p className="my-2">
-            Empezaremos creando tu tienda!{" "}
-            <label className="font-bold">Añadele un nombre para empezar</label>
-          </p>
-          <Input
-            label="Nombre de la tienda"
-            variant="faded"
-            onChange={handleChangeName}
-            minLength={3}
-            isRequired
-            endContent={
-              buttonVisible ? (
-                <button
-                  className="text-primary drop-shadow-2xl"
-                  onClick={() => {
-                    setverifyClick(!verifyClick);
-                    setbuttonVisible(!buttonVisible);
-                  }}
-                >
-                  <FaCheck />
-                </button>
-              ) : null
-            }
-          />
-        </Create>
-      ) : (
-        <Create>
-          <button
-            onClick={() => {
-              setverifyClick(!verifyClick);
-              setbuttonVisible(!buttonVisible);
-              setStore({
-                storename: "",
-                storepassword: "",
-              });
-            }}
-          >
-            <IoArrowBack />
-          </button>
-          <h1 className="text-2xl">
-            Increible ese nombre{" "}
-            <label className="font-bold">{Store.storename.toUpperCase()}</label>
-          </h1>
-          <p className="my-2">
-            Ahora añadele una contraseña a tu tienda{" "}
-            <label className="font-bold">
-              es importante para garantizar la seguridad
-            </label>
-          </p>
-          <Input
-            type="password"
-            label="Contraseña para la tienda"
-            variant="faded"
-            onChange={handleChangePassword}
-            minLength={3}
-            isRequired
-            endContent={
-              buttonVisible ? (
-                <button
-                  className="text-primary drop-shadow-2xl"
-                  onClick={handleCreateStore}
-                >
-                  <FaCheck />
-                </button>
-              ) : null
-            }
-          />
-        </Create>
-      )}
-    </div>
-  );
+  setTimeout(() => {
+    return (
+      <div>
+        <h1>{errors}</h1>
+        {!myAccount ? null : !verifyClick ? (
+          <Create>
+            <h1 className="text-2xl">
+              Bienvenido{" "}
+              <label className="font-bold">
+                {myAccount.userName.toUpperCase()}
+              </label>
+            </h1>
+            <p className="my-2">
+              Empezaremos creando tu tienda!{" "}
+              <label className="font-bold">Añadele un nombre para empezar</label>
+            </p>
+            <Input
+              label="Nombre de la tienda"
+              variant="faded"
+              onChange={handleChangeName}
+              minLength={3}
+              isRequired
+              endContent={
+                buttonVisible ? (
+                  <button
+                    className="text-primary drop-shadow-2xl"
+                    onClick={() => {
+                      setverifyClick(!verifyClick);
+                      setbuttonVisible(!buttonVisible);
+                    }}
+                  >
+                    <FaCheck />
+                  </button>
+                ) : null
+              }
+            />
+          </Create>
+        ) : (
+          <Create>
+            <button
+              onClick={() => {
+                setverifyClick(!verifyClick);
+                setbuttonVisible(!buttonVisible);
+                setStore({
+                  storename: "",
+                  storepassword: "",
+                });
+              }}
+            >
+              <IoArrowBack />
+            </button>
+            <h1 className="text-2xl">
+              Increible ese nombre{" "}
+              <label className="font-bold">{Store.storename.toUpperCase()}</label>
+            </h1>
+            <p className="my-2">
+              Ahora añadele una contraseña a tu tienda{" "}
+              <label className="font-bold">
+                es importante para garantizar la seguridad
+              </label>
+            </p>
+            <Input
+              type="password"
+              label="Contraseña para la tienda"
+              variant="faded"
+              onChange={handleChangePassword}
+              minLength={3}
+              isRequired
+              endContent={
+                buttonVisible ? (
+                  <button
+                    className="text-primary drop-shadow-2xl"
+                    onClick={handleCreateStore}
+                  >
+                    <FaCheck />
+                  </button>
+                ) : null
+              }
+            />
+          </Create>
+        )}
+      </div>
+    );
+  }, 1)
 }
 
 export default StartCreatingStore;

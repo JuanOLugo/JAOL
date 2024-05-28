@@ -17,6 +17,13 @@ function App() {
     const data = await LoginUser();
     return data;
   };
+  
+  const createStore = window.localStorage.getItem("createStoreTutorial")
+  useEffect(() => {
+      console.log(createStore)
+  }, [createStore])
+  
+  console.log(createStore)
   useEffect(() => {
     if (window.localStorage.getItem("u53r")) {
       setwaitingLogin(true);
@@ -27,7 +34,10 @@ function App() {
           setMyAccount(data.data.user);
           setwaitingLogin(false);
           navigate("/dashboard");
-        });
+        }).catch(err => {
+          window.localStorage.removeItem("u53r");
+          window.location.reload()
+        })
     } else {
       navigate("/login");
     }
@@ -45,7 +55,7 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              window.localStorage.getItem("createStoreTutorial") === "true" ? (
+              createStore === "true" ? (
                 <StoreContextProvider>
                   <Dashboard />
                 </StoreContextProvider>

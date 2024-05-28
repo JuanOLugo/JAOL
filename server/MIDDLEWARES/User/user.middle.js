@@ -36,9 +36,12 @@ const userLogin = async (req, res, next) => {
         try {
             userDecoded = await verifyToken(authorization)
         } catch (error) {
-            res.status(400).send(error.msgERR)
+           return res.status(400).send({msgERR: "Incorrect Token"})
         }
+
+        
         const findUser = await User.findById(userDecoded.decodedToken.id).populate({path: "Stores", select: "-StorePassword"}).exec()
+        
         if (findUser) {
             res.status(200).send({
                 msgOK: "User logged successfully",
