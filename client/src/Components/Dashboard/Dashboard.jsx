@@ -23,7 +23,7 @@ function Dashboard({ storeState }) {
     if (myStores) {
       if (myStores.length <= 0) {
         window.localStorage.setItem("createStoreTutorial", "false");
-        window.location.reload();
+        navigate("/dashboard");
       }
     }
   }, [myStores]);

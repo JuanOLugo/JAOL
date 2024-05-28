@@ -6,7 +6,9 @@ import { Input } from "@nextui-org/react";
 import { FaCheck } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
 import { CreateStore } from "../../Helpers/Connections";
+import { useNavigate } from "react-router-dom";
 function StartCreatingStore() {
+  const navigate = useNavigate();
   const { myAccount } = useContext(UserContext);
   const { setMyStores, myStores } = useContext(StoreContext);
   const [buttonVisible, setbuttonVisible] = useState(false);
@@ -22,7 +24,7 @@ function StartCreatingStore() {
     if (myAccount) {
       if (myAccount.Stores.length > 0) {
         window.localStorage.setItem("createStoreTutorial", "true");
-        window.location.reload()
+        navigate("/dashboard")
       }
     }
   }, [myAccount]);
