@@ -7,10 +7,9 @@ const Contable = require("../../DB/models/contable.MODEL")
 const Bills = require("../../DB/models/bills.MODEL")
 
 const createBill = async (req, res) => {
-    const { billTitle, billAmount, idStore, idContable, dateContable } = req.body
-    const {store, user} = req.user_store
+    const { billTitle, billAmount, idContable, dateContable } = req.body
     const date = new Date().toString().split(" ", 4)
-
+    
     const dateVerify = date.map((e, i) => {
         const verify = dateContable.split(" ", 4)[i] === e
         if (!verify) return "Error"
@@ -25,6 +24,7 @@ const createBill = async (req, res) => {
     })
     const saveBill = await newBill.save()
     const contable = await Contable.findById(idContable)
+    console.log(contable, idContable)
     contable.bills.push(saveBill)
     await contable.save()
 
@@ -61,5 +61,17 @@ const editBill = async (req, res) => {
         bill: contable.bills
     })
 }
+
+const getBills = async (req, res) => {
+    
+    const {bills} = req.body
+    Xcon
+    res.status(200).send({
+        msgOK: "Bill edited successfully",
+        bill: contable.bills
+    })
+}
+
+
 
 module.exports = { createBill, removebill, editBill  }

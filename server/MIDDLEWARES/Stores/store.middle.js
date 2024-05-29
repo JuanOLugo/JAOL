@@ -56,7 +56,7 @@ const createStore = async (req, res, next) => {
 
 const getMyStores = async (req, res) => {
     const {user} = req.user_store
-    const stores = await Store.find({ StoreOwner: user._id })
+    const stores = await Store.find({ StoreOwner: user._id }).populate("StoreContableLog")
     res.status(200).send(stores)
 }
 
@@ -153,17 +153,28 @@ const addLog = async (req, res) => {
         store.StoreContableLog.push(savedLog.id)
         await store.save()
         res.status(200).send({
-            msgOK: "Log added successfully"
+            msgOK: "Log added successfully",
+            savedLog
         })
     } else {
         res.status(400).send({
-            msgERR: "Log already exist"
+            msgERR: "Log already exist",
+            
         })
     }
+}
 
+const getLog = async (req, res) => {
+    const { store } = req.user_store
+    const {idLog} = req.body
 
-
+    const findContable = await Contable.find({storeContable: store._id})
+    const findContableone = findContable.filter(e => e._id.toString() === idLog)
+    if (findContableone.length === 0) return res.status(400).send({msgERR: "No Contables found"})
+    res.status(200).send({contable: findContableone[0]})
+    
+   
 }
 
 
-module.exports = { addClient, createStore, addPaymentMethod, deletePaymentMethod, deleteClient, addLog, getMyStores}
+module.exports = { addClient, createStore, addPaymentMethod, deletePaymentMethod, deleteClient, addLog, getMyStores, getLog}

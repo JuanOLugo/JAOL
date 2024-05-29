@@ -6,9 +6,11 @@ const StoreContext = createContext()
 function StoreContextProvider({ children }) {
 
     const [myStores, setMyStores] = useState(null)
+    const [myContable, setmyContable] = useState(null)
+    const [myBills, setmyBills] = useState(null)
 
     return (
-        <StoreContext.Provider value={{ myStores, setMyStores }}>
+        <StoreContext.Provider value={{ myStores, setMyStores, myContable, setmyContable }}>
             {children}
         </StoreContext.Provider>
     )
