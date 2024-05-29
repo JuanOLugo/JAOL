@@ -9,7 +9,7 @@ const Bills = require("../../DB/models/bills.MODEL")
 const createBill = async (req, res) => {
     const { billTitle, billAmount, idContable, dateContable } = req.body
     const date = new Date().toString().split(" ", 4)
-
+    console.log(dateContable)
     const dateVerify = date.map((e, i) => {
         const verify = dateContable.split(" ", 4)[i] === e
         if (!verify) return "Error"
@@ -20,17 +20,18 @@ const createBill = async (req, res) => {
     const newBill = new Bills({
         titleBill: billTitle,
         totalBill: billAmount,
-        dateBill: new Date()
+        dateBill: new Date(),
+        contableBill: idContable,
     })
     const saveBill = await newBill.save()
     const contable = await Contable.findById(idContable)
-    console.log(contable, idContable)
+    const findBills = await Bills.find({contableBill: idContable })
     contable.bills.push(saveBill)
     await contable.save()
-
-    const findContable = await Contable.findById(idContable).populate("bills")
+    const filterBillsForSend = findBills.filter(b => b.dateBill.split(" ", 4).toString() === date.toString())
     res.status(200).send({
-        msgOK: "Bill added successfully"
+        msgOK: "Bill added successfully",
+        bills: filterBillsForSend
     })
 
 }
@@ -64,14 +65,15 @@ const editBill = async (req, res) => {
 const getBills = async (req, res) => {
     const { bills } = req.body
     let billsToReturn = []
-    bills.forEach(async (e) => {
-        const myBillFind = await Bills.findById(e)
-        billsToReturn.push(myBillFind)
-        if(billsToReturn.length === bills.length) {
-           return res.status(200).send({msgOK: "Bills getted succesfully", bills: billsToReturn})
-        }
-        
-    })
+    if(bills){
+        bills.forEach(async (e) => {
+            const myBillFind = await Bills.findById(e)
+            billsToReturn.push(myBillFind)
+            if(billsToReturn.length === bills.length) {
+               return res.status(200).send({msgOK: "Bills getted succesfully", bills: billsToReturn})
+            }
+        })
+    }
 
     
     

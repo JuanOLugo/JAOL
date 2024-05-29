@@ -17,7 +17,7 @@ function GrandDash({ setNavOpen, navOpen }) {
 
   return (
     <>
-      {!myAccount & !myStores ? <Wait /> : <div className={` transition-all bg-white rounded-xl shadow-2xl h-[90%]  duration-500 ${navOpen ? "w-4/5 " : "w-11/12"} `}>
+      {!myAccount && !myStores ? <Wait /> : <div className={` transition-all bg-white rounded-xl shadow-2xl h-[90%]  duration-500 ${navOpen ? "w-4/5 " : "w-11/12"} `}>
         <div className="h-full ">
           <button className={`text-5xl transition-all absolute bg-slate-100 p-1 shadow-md  rounded-full  duration-500 ${navOpen ? "translate-y-[-99rem] translate-x-4" : "translate-y-2 translate-x-4"}`} onClick={handleNavClick}>
             <IoMdClose />

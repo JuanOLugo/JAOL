@@ -139,7 +139,6 @@ const addLog = async (req, res) => {
     const theDate = new Date().toString().split(" ", 4)
     const findIfExistLog = myStorePopulate.StoreContableLog.map((e, i) => {
         const date = e.date.split(" ", 4)
-        console.log(date.toString() === theDate.toString(), "d")
         return date.toString() === theDate.toString()
     })
 
@@ -157,12 +156,8 @@ const addLog = async (req, res) => {
             msgOK: "Log added successfully",
             savedLog
         })
-    } else {
-        res.status(400).send({
-            msgERR: "Log already exist",
-            
-        })
-    }
+    } 
+    
 }
 
 const getLog = async (req, res) => {
@@ -173,8 +168,6 @@ const getLog = async (req, res) => {
     const findContableone = findContable.filter(e => e._id.toString() === idLog)
     if (findContableone.length === 0) return res.status(400).send({msgERR: "No Contables found"})
     res.status(200).send({contable: findContableone[0]})
-    
-   
 }
 
 

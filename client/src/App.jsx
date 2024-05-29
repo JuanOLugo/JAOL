@@ -19,11 +19,7 @@ function App() {
   };
   
   const createStore = window.localStorage.getItem("createStoreTutorial")
-  useEffect(() => {
-      console.log(createStore)
-  }, [createStore])
   
-  console.log(createStore)
   useEffect(() => {
     if (window.localStorage.getItem("u53r")) {
       setwaitingLogin(true);
