@@ -1,34 +1,40 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Card, Divider, CardHeader, CardBody, CardFooter, Link, getKeyValue, Button, Table, TableHeader, TableBody, TableCell, TableColumn, TableRow } from '@nextui-org/react'
 import { StoreContext } from '../../Context/StoreContext';
-import { CreateStoreContable, NewBill, getLogContable } from '../../Helpers/Connections';
+import { CreateStoreContable, GetMyBills, NewBill, getLogContable } from '../../Helpers/Connections';
 import Wait from '../Wait';
 
 function StorebasicInfo() {
 
-    const { myStores, myContable, setmyContable} = useContext(StoreContext)
-    const [logDual, setlogDual] = useState(null) 
+    const { myStores, myContable, setmyContable, myBills, setmyBills } = useContext(StoreContext)
+    const [logDual, setlogDual] = useState(null)
     useEffect(() => {
-      if(myStores){
+        if (myStores) {
+            const myDate = new Date().toString().split(" ", 4)
+            const mapping = myStores[0].StoreContableLog.filter(e => {
+                return e.date.split(" ", 4).toString() === myDate.toString()
+            })
+            setmyContable(mapping[0])
+            
 
-        const myDate =  new Date().toString().split(" ", 4)
-        const mapping = myStores[0].StoreContableLog.filter(e => {
-            return e.date.split(" ", 4).toString() === myDate.toString()
-        })
-        setmyContable(mapping[0])
-
-      }
+        }
     }, [myStores])
-    
-    useEffect(() => {
-      if(myContable){
-        setlogDual([...myContable.bills, ...myContable.credits])
-        console.log(myContable)
-      }
 
-      
+    useEffect(() => {
+        if (myContable) {
+            setlogDual([...myContable.bills, ...myContable.credits])
+            console.log(myContable)
+            const getBills = async () => {
+                const data = await GetMyBills(myContable.bills)
+                setmyBills(data.data.bills)
+            }
+            getBills()
+
+        }
+
+
     }, [myContable])
-    
+
     const createBill = async () => {
         const newBill = {
             billTitle: "",
@@ -37,15 +43,16 @@ function StorebasicInfo() {
             dateContable: myContable.date
         }
 
-       const data = await NewBill(newBill)
-       setmyContable(data.data.contable)
+        const data = await NewBill(newBill)
+        setmyContable(data.data.contable)
 
-        
+
+
     }
 
     const columns = [
         {
-            key: `${"titleBill" }`,
+            key: `${"titleBill"}`,
             label: "TIPO",
         },
         {
@@ -73,7 +80,7 @@ function StorebasicInfo() {
                 <h1 className='font-light'>Bienvenido a la la informacion general de tu tienda</h1>
             </div>
             <div className='flex px-5 py-3 w-full justify-around'>
-                {!myStores ? <Wait/> : !myContable  ? <Card className="max-w-[200px] max-h-[200px]">
+                {!myStores ? <Wait /> : !myContable ? <Card className="max-w-[200px] max-h-[200px]">
                     <CardBody>
                         <p>Crea tu log contable</p>
                     </CardBody>
@@ -92,7 +99,7 @@ function StorebasicInfo() {
                     <Divider />
                     <CardFooter className="flex gap-3">
                         <div className="flex flex-col">
-                            <Button color="primary"  variant='bordered'>
+                            <Button color="primary" variant='bordered'>
                                 Gastos
                             </Button>
                         </div>
@@ -113,8 +120,29 @@ function StorebasicInfo() {
                         </CardFooter>
                     </Card>
                 </div>
+
             </div>
-            
+            <div>{
+                !myBills ? <Wait /> :
+                    <div className='w-full h-full '>
+                        <div className='px-4'>
+                            <h1 className='font-bold text-2xl mb-5'>Registro de hoy</h1>
+
+                            <Table aria-label="Example table with dynamic content" className='lg:h-full h-56'>
+                                <TableHeader columns={columns}>
+                                    {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+                                </TableHeader>
+                                <TableBody items={myBills}>
+                                    {(item) => (
+                                        <TableRow key={item.key}>
+                                            {(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    </div>
+            }</div>
         </div>
     )
 }

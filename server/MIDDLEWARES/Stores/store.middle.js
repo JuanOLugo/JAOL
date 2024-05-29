@@ -137,14 +137,15 @@ const addLog = async (req, res) => {
 
     const myStorePopulate = await store.populate("StoreContableLog")
     const theDate = new Date().toString().split(" ", 4)
-    console.log(myStorePopulate)
     const findIfExistLog = myStorePopulate.StoreContableLog.map((e, i) => {
         const date = e.date.split(" ", 4)
+        console.log(date.toString() === theDate.toString(), "d")
         return date.toString() === theDate.toString()
     })
+
     console.log(findIfExistLog)
 
-    if (findIfExistLog.length === 0) {
+    if (!findIfExistLog[0]) {
         const newLog = new Contable({
             date: new Date(),
             storeContable: store.id

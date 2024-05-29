@@ -16,7 +16,7 @@ const billSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "contable"
     },
-    dateBill: Date
+    dateBill: String
 
 })
 

@@ -9,14 +9,14 @@ const Bills = require("../../DB/models/bills.MODEL")
 const createBill = async (req, res) => {
     const { billTitle, billAmount, idContable, dateContable } = req.body
     const date = new Date().toString().split(" ", 4)
-    
+
     const dateVerify = date.map((e, i) => {
         const verify = dateContable.split(" ", 4)[i] === e
         if (!verify) return "Error"
         return "correct"
 
     })
-    if (dateVerify.includes("Error")) return res.status(400).send({msgERR: "No coinciden las fechas"}) 
+    if (dateVerify.includes("Error")) return res.status(400).send({ msgERR: "No coinciden las fechas" })
     const newBill = new Bills({
         titleBill: billTitle,
         totalBill: billAmount,
@@ -30,15 +30,14 @@ const createBill = async (req, res) => {
 
     const findContable = await Contable.findById(idContable).populate("bills")
     res.status(200).send({
-        msgOK: "Bill added successfully",
-        contable: findContable
+        msgOK: "Bill added successfully"
     })
 
 }
 
 const removebill = async (req, res) => {
-    const {billId, idContable} = req.body
-    const {store, user} = req.user_store
+    const { billId, idContable } = req.body
+    const { store, user } = req.user_store
     const findBill = await Bills.findByIdAndDelete(billId)
     const findContable = await Contable.findById(idContable)
     console.log(findContable)
@@ -53,8 +52,8 @@ const removebill = async (req, res) => {
 }
 
 const editBill = async (req, res) => {
-    const {billId, billTitle, billAmount, descriptionBill, contableId} = req.body
-    await Bills.findByIdAndUpdate(billId, {titleBill: billTitle, descriptionBill: descriptionBill, totalBill: billAmount}, {new: true})
+    const { billId, billTitle, billAmount, descriptionBill, contableId } = req.body
+    await Bills.findByIdAndUpdate(billId, { titleBill: billTitle, descriptionBill: descriptionBill, totalBill: billAmount }, { new: true })
     const contable = await Contable.findById(contableId).populate("bills")
     res.status(200).send({
         msgOK: "Bill edited successfully",
@@ -63,15 +62,21 @@ const editBill = async (req, res) => {
 }
 
 const getBills = async (req, res) => {
-    
-    const {bills} = req.body
-    Xcon
-    res.status(200).send({
-        msgOK: "Bill edited successfully",
-        bill: contable.bills
+    const { bills } = req.body
+    let billsToReturn = []
+    bills.forEach(async (e) => {
+        const myBillFind = await Bills.findById(e)
+        billsToReturn.push(myBillFind)
+        if(billsToReturn.length === bills.length) {
+           return res.status(200).send({msgOK: "Bills getted succesfully", bills: billsToReturn})
+        }
+        
     })
+
+    
+    
 }
 
 
 
-module.exports = { createBill, removebill, editBill  }
+module.exports = { createBill, removebill, editBill, getBills }

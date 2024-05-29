@@ -10,7 +10,7 @@ function StoreContextProvider({ children }) {
     const [myBills, setmyBills] = useState(null)
 
     return (
-        <StoreContext.Provider value={{ myStores, setMyStores, myContable, setmyContable }}>
+        <StoreContext.Provider value={{ myStores, setMyStores, myContable, setmyContable, myBills, setmyBills }}>
             {children}
         </StoreContext.Provider>
     )
