@@ -20,9 +20,11 @@ import {
   CreateStoreContable,
   GetMyBills,
   NewBill,
-  getLogContable,
+  getBillsAndCredits
 } from "../../Helpers/Connections";
 import Wait from "../Wait";
+
+
 
 function StorebasicInfo() {
   const { myStores, myContable, setmyContable, myBills, setmyBills } =
@@ -51,18 +53,20 @@ function StorebasicInfo() {
 
   useEffect(() => {
     if (myContable) {
-      const getBills = async () => {
-        const data = await GetMyBills(myContable.bills);
+      console.log(myContable)
+      const getBC = async () => {
+        const data = await getBillsAndCredits(myContable.bills, myContable.credits);
         setmyBills(data.data.bills);
       };
-      getBills();
-      console.log(myContable);
+      getBC();
+      
     }
   }, [myContable]);
 
   useEffect(() => {
     if (myBills) {
       setlogDual([...myBills]);
+      console.log(myBills)
     }
   }, [myBills]);
 
@@ -76,7 +80,6 @@ function StorebasicInfo() {
     };
 
     const data = await NewBill(newBill);
-    //setmyContable(data.data.contable)
     setmyBills(data.data.bills);
   };
 

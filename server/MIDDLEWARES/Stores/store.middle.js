@@ -4,6 +4,9 @@ const Store = require("../../DB/models/store.MODEL")
 const Client = require("../../DB/models/client.MODEL")
 const bcrypt = require("bcrypt")
 const Contable = require("../../DB/models/contable.MODEL")
+const Bills = require("../../DB/models/bills.MODEL")
+const Credits = require("../../DB/models/credits.MODEL")
+
 
 
 const createStore = async (req, res, next) => {
@@ -171,4 +174,40 @@ const getLog = async (req, res) => {
 }
 
 
-module.exports = { addClient, createStore, addPaymentMethod, deletePaymentMethod, deleteClient, addLog, getMyStores, getLog}
+const getBillsAndCredits = async (req, res) => {
+    const { bills, credits } = req.body
+    let billsToReturn = []
+    let creditsToReturn = []
+    if(bills && credits) {
+        const billsPromises = bills.map(async (e) => {
+            const myBillFind = await Bills.findById(e)
+            return myBillFind
+        })
+
+        const creditsPromises = credits.map(async (e) => {
+            const myCreditFind = await Credits.findById(e)
+            return myCreditFind
+        })
+
+        try {
+            billsToReturn = await Promise.all(billsPromises)
+            creditsToReturn = await Promise.all(creditsPromises)
+
+            res.status(200).send({
+                msgOK: "Bills and credits retrieved successfully",
+                bills: billsToReturn,
+                credits: creditsToReturn
+            })
+        } catch (error) {
+            console.error(error)
+            res.status(500).send({ error: "Error retrieving bills and credits" })
+        }
+    } else {
+        res.status(400).send({ msgERR: "No bills or credits provided" })
+    }
+
+   
+}
+
+
+module.exports = { addClient, createStore, addPaymentMethod, deletePaymentMethod, deleteClient, addLog, getMyStores, getLog, getBillsAndCredits }

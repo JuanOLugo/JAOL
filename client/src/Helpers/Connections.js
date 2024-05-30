@@ -73,3 +73,12 @@ export const GetMyBills = async (bills) => {
   });
   return data;
 }
+
+export const getBillsAndCredits  = async (bills, credits) => {
+  const data = await axios.post(`${BASE_URL}stores/getbillsandcredit`, { bills, credits }, {
+    headers: {
+      Authorization: "Bearer " + window.localStorage.getItem("u53r"),
+    },
+  });
+  return data;
+}
