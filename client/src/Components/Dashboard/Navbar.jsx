@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { navThings } from "../../libs/NavThings";
-function Navbar({ setNavOpen, navOpen }) {
+import Inicio from "./Inicio";
+function Navbar({ setNavOpen, navOpen, Items, setItems }) {
   const handleNavClick = () => {
     setNavOpen(!navOpen);
   };
+
 
   return (
     <div className={`h-screen flex flex-col justify-around transition-all duration-150 mx-10   ${!navOpen ? " w-0 translate-x-[-99rem]" : "translate-x-0"} `}>
@@ -26,7 +28,12 @@ function Navbar({ setNavOpen, navOpen }) {
                   items.color ? items.color : null
                 }`}
               >
-                <h1>{items.name}</h1>
+                <button onClick={() => {
+                  if(items.action === "inicio") setItems({...items, inicio: true});
+                  if(items.action === "clients") setItems({...items, clientes: true});
+                  if(items.action === "contable") setItems({...items, contabilidad: true});
+                }}>{items.name}</button>
+
               </div>
             );
           })}

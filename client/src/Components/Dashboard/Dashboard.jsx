@@ -31,6 +31,17 @@ function Dashboard() {
     }
   }, [myStores]);
 
+  const [Items, setItems] = useState({
+    inicio: true,
+    clientes: false,
+    contabilidad: false,
+  })
+
+  useEffect(() => {
+    console.log(Items)
+  }, [Items])
+  
+
   const handleLogOut = async () => {
     window.localStorage.removeItem("createStoreTutorial");
     window.localStorage.removeItem("u53r");
@@ -40,8 +51,8 @@ function Dashboard() {
   };
 
   return <div className="bg-primary-100 h-screen flex justify-evenly  items-center">
-    <Navbar setNavOpen={setisNavOpen} navOpen={isNavOpen}/>
-    <GrandDash setNavOpen={setisNavOpen} navOpen={isNavOpen} />
+    <Navbar setNavOpen={setisNavOpen} navOpen={isNavOpen} Items={Items} setItems={setItems}/>
+    <GrandDash setNavOpen={setisNavOpen} navOpen={isNavOpen} Items={Items}/>
   </div>;
 }
 
